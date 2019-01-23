@@ -1,16 +1,17 @@
 class ItemsController < ApplicationController
 	before_action :find_item, only: [:show, :edit, :update, :destroy]
+	before_action :authenticate_user!, except: [:index, :show]
 
 	def index
 		@items = Item.all.order("created_at DESC")
 	end
 
 	def new
-		@item = Item.new
+		@item = current_user.item.build
 	end
 
 	def create
-		@item = Item.new(item_params)
+		@item = current_user.item.build(item_params)
 		if @item.save
 			redirect_to root_path
 		else
